@@ -507,16 +507,17 @@ public:
 	//Touch Callbacks
     void enableTouchEventCallbacks()
     {
-        mCbTouchesBegan = mApp->registerTouchesBegan(this, &ciUICanvas::canvasTouchesBegan); 
-        mCbTouchesMoved = mApp->registerTouchesMoved(this, &ciUICanvas::canvasTouchesMoved); 
-        mCbTouchesEnded = mApp->registerTouchesEnded(this, &ciUICanvas::canvasTouchesEnded); 
+        auto win = mApp->getWindowIndex(0);
+        mCbTouchesBegan = win->connectTouchesBegan( &ciUICanvas::canvasTouchesBegan, this );
+        mCbTouchesMoved = win->connectTouchesMoved( &ciUICanvas::canvasTouchesMoved, this );
+        mCbTouchesEnded = win->connectTouchesEnded( &ciUICanvas::canvasTouchesEnded, this );
     }	
 
 	void disableTouchEventCallbacks()
     {
-        mApp->unregisterTouchesBegan( mCbTouchesBegan );
-        mApp->unregisterTouchesMoved( mCbTouchesMoved );
-        mApp->unregisterTouchesEnded( mCbTouchesEnded );
+        mCbTouchesBegan.disconnect();
+        mCbTouchesMoved.disconnect();
+        mCbTouchesEnded.disconnect();
     }	
 	
 #else
@@ -524,33 +525,35 @@ public:
 	//Mouse Callbacks
     void enableMouseEventCallbacks()
     {
-        mCbMouseDown = mApp->registerMouseDown( this, &ciUICanvas::canvasMouseDown );
-        mCbMouseUp = mApp->registerMouseUp( this, &ciUICanvas::canvasMouseUp );	
-        mCbMouseMove = mApp->registerMouseMove( this, &ciUICanvas::canvasMouseMove );
-        mCbMouseDrag = mApp->registerMouseDrag( this, &ciUICanvas::canvasMouseDrag );	
+        auto win = mApp->getWindowIndex(0);
+        mCbMouseDown = win->connectMouseDown( &ciUICanvas::canvasMouseDown, this );
+        mCbMouseUp = win->connectMouseUp( &ciUICanvas::canvasMouseUp, this );
+        mCbMouseMove = win->connectMouseMove( &ciUICanvas::canvasMouseMove, this );
+        mCbMouseDrag = win->connectMouseDrag( &ciUICanvas::canvasMouseDrag, this );
     }
 
 	//Mouse Callbacks
     void disableMouseEventCallbacks()
     {
-        mApp->unregisterMouseDown( mCbMouseDown );
-        mApp->unregisterMouseUp( mCbMouseUp );	
-        mApp->unregisterMouseMove( mCbMouseMove );
-        mApp->unregisterMouseDrag( mCbMouseDrag );	
+        mCbMouseDown.disconnect();
+        mCbMouseUp.disconnect();
+        mCbMouseMove.disconnect();
+        mCbMouseDrag.disconnect();
     }	
 
     //KeyBoard Callbacks
 	void enableKeyEventCallbacks()
 	{
-        mCbKeyDown = mApp->registerKeyDown( this, &ciUICanvas::canvasKeyDown );
-        mCbKeyUp = mApp->registerKeyUp( this, &ciUICanvas::canvasKeyUp );
+        auto win = mApp->getWindowIndex(0);
+        mCbKeyDown = win->connectKeyDown( &ciUICanvas::canvasKeyDown, this );
+        mCbKeyUp = win->connectKeyUp( &ciUICanvas::canvasKeyUp, this );
 	}
 
 	//KeyBoard Callbacks
 	void disableKeyEventCallbacks()
 	{
-        mApp->unregisterKeyDown( mCbKeyDown ); 
-        mApp->unregisterKeyUp( mCbKeyUp );         
+        mCbKeyDown.disconnect();
+        mCbKeyUp.disconnect();
 	}
     
 #endif	    
@@ -2134,11 +2137,11 @@ protected:
     
 #if defined( CINDER_COCOA_TOUCH )
     app::AppCocoaTouch *mApp;
-    ci::CallbackId mCbTouchesBegan, mCbTouchesMoved, mCbTouchesEnded; 
+    signals::connection mCbTouchesBegan, mCbTouchesMoved, mCbTouchesEnded; 
 #else
     app::App *mApp;    	
-    ci::CallbackId mCbMouseDown, mCbMouseDrag, mCbMouseUp, mCbMouseMove;
-    ci::CallbackId mCbKeyDown, mCbKeyUp;
+    signals::connection mCbMouseDown, mCbMouseDrag, mCbMouseUp, mCbMouseMove;
+    signals::connection mCbKeyDown, mCbKeyUp;
 #endif 
     
     gl::TextureFontRef font_large; 	
