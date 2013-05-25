@@ -122,7 +122,7 @@ public:
         {
             hasSharedResources = false;             
             fontName = CI_UI_FONT_NAME;
-            setFont(fontName);         
+            //setFont(fontName);
         }
                 
 		font = font_medium; 
@@ -398,6 +398,16 @@ public:
         bool small = updateFont(CI_UI_FONT_SMALL, filename, CI_UI_FONT_SMALL_SIZE);
         bool successful = large && medium && small;
         if( successful ) fontName = filename;
+        return successful;
+    }
+    
+    bool setFont(DataSourceRef fontRes, string name, int largeSize = CI_UI_FONT_LARGE_SIZE, int mediumSize = CI_UI_FONT_MEDIUM_SIZE, int smallSize = CI_UI_FONT_SMALL_SIZE)
+    {
+        bool large = updateFont(CI_UI_FONT_LARGE, fontRes, largeSize);
+        bool medium = updateFont(CI_UI_FONT_MEDIUM, fontRes, mediumSize);
+        bool small = updateFont(CI_UI_FONT_SMALL, fontRes, smallSize);
+        bool successful = large && medium && small;
+        if( successful ) fontName = name;
         return successful;
     }
     
@@ -2194,6 +2204,32 @@ protected:
 
                 break; 
 
+        }
+        return success;
+    }
+    
+    bool updateFont(ciUIWidgetFontType _kind, DataSourceRef fontRes, int fontsize)
+    {
+        bool success = true;
+        switch(_kind)
+        {
+            case CI_UI_FONT_LARGE:
+                fontLarge = Font( fontRes, fontsize);
+                font_large = gl::TextureFont::create(fontLarge);
+                break;
+                
+            case CI_UI_FONT_MEDIUM:
+                fontMedium = Font( fontRes, fontsize);
+                font_medium = gl::TextureFont::create(fontMedium);
+                
+                break;
+                
+            case CI_UI_FONT_SMALL:
+                fontSmall = Font( fontRes, fontsize);
+                font_small = gl::TextureFont::create(fontSmall);
+                
+                break;
+                
         }
         return success;
     }
