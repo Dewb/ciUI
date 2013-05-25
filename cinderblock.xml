@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<block
+	name="ciUI"
+	id="com.syedrezaali.ciui"
+	author="Reza Ali"
+	license="MIT"
+	summary="Minimally designed GUI widgets in OpenGL"
+	core="false"
+    git="https://github.com/rezaali/ciUI"
+	>
+	<headerPattern>src/*.h</headerPattern>
+	<includePath>src</includePath>
+</block>
+</cinder>
